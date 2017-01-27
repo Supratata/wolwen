@@ -1,0 +1,135 @@
+<div class="row ouverts">
+    <div class="tab_test tab-1">
+        <button class="titreDialog btn-flat waves-effect" ng-click="dialogOpen(1); ">
+            {{titre_1 | lowercase| limitTo: 15 }}{{titre_1.length > 15 ? '...' : ''}}
+            <i class="fa fa-pencil" title="Il écrit" ng-show="ecrit1"></i>
+        </button>
+        <button class="fa fa-remove btn-flat waves-effect closeDialog" ng-click="closeDialog(1)" aria-hidden="true"></button>
+    </div>
+    <div class="tab_test tab-2">
+        <button class="titreDialog btn-flat waves-effect" ng-click="dialogOpen(2); ">
+            {{titre_2 | lowercase| limitTo: 15 }}{{titre_2.length > 15 ? '...' : ''}}
+            <i class="fa fa-pencil" title="Il écrit" ng-show="ecrit2"></i>
+        </button>
+        <button class="fa fa-remove btn-flat waves-effect closeDialog" ng-click="closeDialog(2)" aria-hidden="true"></button>
+    </div>
+    <div class="tab_test tab-3">
+        <button class="titreDialog btn-flat waves-effect" ng-click="dialogOpen(3); ">
+            {{titre_3 | lowercase| limitTo: 15 }}{{titre_3.length > 15 ? '...' : ''}}
+            <i class="fa fa-pencil" title="Il écrit" ng-show="ecrit3"></i>
+        </button>
+        <button class="fa fa-remove btn-flat waves-effect closeDialog" ng-click="closeDialog(3)" aria-hidden="true"></button>
+    </div>
+    <div class="tab_test tab-4">
+        <button class="titreDialog btn-flat waves-effect" ng-click="dialogOpen(4); ">
+            {{titre_4 | lowercase| limitTo: 15 }}{{titre_4.length > 15 ? '...' : ''}}
+            <i class="fa fa-pencil" title="Il écrit" ng-show="ecrit4"></i>
+        </button>
+        <button class="fa fa-remove btn-flat waves-effect closeDialog" ng-click="closeDialog(4)" aria-hidden="true"></button>
+    </div>
+    <div class="tab_test tab-5">
+        <button class="titreDialog btn-flat waves-effect" ng-click="dialogOpen(5); ">
+            {{titre_5 | lowercase| limitTo: 15 }}{{titre_5.length > 15 ? '...' : ''}}
+            <i class="fa fa-pencil" title="Il écrit" ng-show="ecrit5"></i>
+        </button>
+        <button class="fa fa-remove btn-flat waves-effect closeDialog" ng-click="closeDialog(5)" aria-hidden="true"></button>
+    </div>
+</div>
+<div class="tab-dialog" id="teste_juste">
+    <div ng-repeat="h in lesMessagesChats" repeat-end="onEnd()">
+        <p ng-if="h.expediteur._id == myId" class="envoye">
+            <span ng-if="!h.fichier" class="message_text" ng-bind-html = "h.message"></span>
+            <span ng-if="h.fichier.type == 'image'" class="img_message" >
+                <img ng-src="/filechat/{{h.message}}" alt="Télécharger">
+            </span>
+            <span ng-if="h.fichier.type == 'audio'">
+                <audio style="vertical-align: middle; height: 30px; width: 300px; margin: 6px" ng-src="{{h.message}}" controls="controls"></audio>
+            </span>
+            <span  ng-if="h.fichier.type == 'video'">
+                <video class="videoemit"  ng-src="{{h.message}}" controls="controls"></video>
+            </span>
+            <span ng-if="h.fichier.type == 'doc'">
+                <a href="/filechat/{{h.message}}" download="{{h.message}}">
+                    <img ng-src="{{h.fichier.preview}}" class="preview" alt="Télécharger">
+                </a>
+            </span>
+        </p>
+        <p ng-if="h.expediteur._id == myId" style="color: black;margin: 0px;position:relative;top:-10px;margin-left: auto;">
+            <i style="font-size: 0.6em;">envoyé: {{h.dateEnvoi | date:' HH:mm:ss dd/MM/yyyy'}}</i>
+        </p>
+        <p ng-if="h.expediteur._id != myId" class="recu">
+            <span style="float: left">
+                <img class="img-circle img-chat" ng-src="{{h.expediteur.photo}}">
+                <span ng-if="!h.fichier" class="message_text" ng-bind-html = "h.message"></span>
+            </span>
+            <span ng-if="h.fichier.type == 'image'" class="img_message" >
+                <img  ng-src="/filechat/{{h.message}}" alt="Télécharger">
+            </span>
+            <span ng-if="h.fichier.type == 'audio'">
+                <audio style="margin: 5px; height: 30px; width: 300px;" ng-src="{{h.message}}" controls="controls"></audio>
+            </span>
+            <span ng-if="h.fichier.type == 'video'">
+                <video class="videoemit" ng-src="{{h.message}}" controls="controls"></video>
+            </span>
+            <span ng-if="h.fichier.type == 'doc'">
+                <a href="/filechat/{{h.message}}" download="{{h.message}}">
+                    <img ng-src="{{h.fichier.preview}}" class="preview" alt="Télécharger">
+                </a>
+            </span>
+        </p>
+        <p ng-if="h.expediteur._id != myId" style="color: black;margin: 0px;position: relative;top: -10px;">
+            <i style="font-size: 0.6em;">reçu: {{h.dateEnvoi | date:' HH:mm:ss dd/MM/yyyy'}}</i>
+        </p>
+    </div>
+</div>
+
+<div class="tdiscussion">
+    <div>
+        <form class="form-inline">
+            <div class="form-group" style="width: 92%; margin-left: 10px;">
+                <div contenteditable="true" ng-bind-html="resultMessage" ng-model="message" ng-click="getFocus()" id="message_input"></div>
+                <hr class="ligne-input">
+            </div>
+            <button ng-click="clickSendMess()" class="sendMessage"> <img ng-src="images/send.png"></button>
+        </form>
+    </div>
+    <div id="richText" ></div>
+    <div class="sendFile">
+        <form class="form-inline">
+            <div class="form-group">
+                <div class="uploadFile smeili" role="button" ng-click="afficherSmile()">
+                    <i class="fa  fa-smile-o  prefix" data-toggle="tooltip" data-placement="top" title="Envoyer un fichier"></i>
+                </div>
+                <div class="ng-binding listSmilies" ng-show="smile_visible">
+                    <i ng-click="smilieSelected('bowtie')" class="emoticon emoticon-bowtie" title="bowtie"></i> <i ng-click="smilieSelected('smile')" class="emoticon emoticon-smile" title="smile"></i>
+                    <i ng-click="smilieSelected('laughing')" class="emoticon emoticon-laughing" title="laughing"></i> <i ng-click="smilieSelected('blush')" class="emoticon emoticon-blush" title="blush"></i>
+                    <i ng-click="smilieSelected('smiley')" class="emoticon emoticon-smiley" title="smiley"></i> <i ng-click="smilieSelected('relaxed')" class="emoticon emoticon-relaxed" title="relaxed"></i>
+                    <i ng-click="smilieSelected('smirk')" class="emoticon emoticon-smirk" title="smirk"></i> <i ng-click="smilieSelected('heart_eyes')" class="emoticon emoticon-heart_eyes" title="heart_eyes"></i>
+                    <i ng-click="smilieSelected('kissing_heart')" class="emoticon emoticon-kissing_heart" title="kissing_heart"></i> <i ng-click="smilieSelected('kissing_closed_eyes')" class="emoticon emoticon-kissing_closed_eyes" title="kissing_closed_eyes"></i>
+                    <i ng-click="smilieSelected('flushed')" class="emoticon emoticon-flushed" title="flushed"></i> <i ng-click="smilieSelected('relieved')" class="emoticon emoticon-relieved" title="relieved"></i>
+                    <i ng-click="smilieSelected('satisfied')" class="emoticon emoticon-satisfied" title="satisfied"></i> <i ng-click="smilieSelected('grin')" class="emoticon emoticon-grin" title="grin"></i> <i ng-click="smilieSelected('wink')" class="emoticon emoticon-wink" title="wink"></i>
+                    <i ng-click="smilieSelected('stuck_out_tongue_winking_eye')" class="emoticon emoticon-stuck_out_tongue_winking_eye" title="stuck_out_tongue_winking_eye"></i> <i ng-click="smilieSelected('stuck_out_tongue_closed_eyes')" class="emoticon emoticon-stuck_out_tongue_closed_eyes" title="stuck_out_tongue_closed_eyes"></i>
+                    <i ng-click="smilieSelected('grinning')" class="emoticon emoticon-grinning" title="grinning"></i> <i ng-click="smilieSelected('kissing')" class="emoticon emoticon-kissing" title="kissing"></i> <i ng-click="smilieSelected('winky_face')" class="emoticon emoticon-winky_face" title="winky_face"></i> <i ng-click="smilieSelected('kissing_smiling_eyes')" class="emoticon emoticon-kissing_smiling_eyes" title="kissing_smiling_eyes"></i> <i ng-click="smilieSelected('stuck_out_tongue')" class="emoticon emoticon-stuck_out_tongue" title="stuck_out_tongue"></i> <i ng-click="smilieSelected('sleeping')" class="emoticon emoticon-sleeping" title="sleeping"></i> <i ng-click="smilieSelected('worried')" class="emoticon emoticon-worried" title="worried"></i> <i ng-click="smilieSelected('frowning')" class="emoticon emoticon-frowning" title="frowning"></i> <i ng-click="smilieSelected('anguished')" class="emoticon emoticon-anguished" title="anguished"></i> <i ng-click="smilieSelected('open_mouth')" class="emoticon emoticon-open_mouth" title="open_mouth"></i> <i ng-click="smilieSelected('grimacing')" class="emoticon emoticon-grimacing" title="grimacing"></i> <i ng-click="smilieSelected('confused')" class="emoticon emoticon-confused" title="confused"></i> <i ng-click="smilieSelected('hushed')" class="emoticon emoticon-hushed" title="hushed"></i> <i ng-click="smilieSelected('expressionless')" class="emoticon emoticon-expressionless" title="expressionless"></i> <i ng-click="smilieSelected('unamused')" class="emoticon emoticon-unamused" title="unamused"></i> <i ng-click="smilieSelected('sweat_smile')" class="emoticon emoticon-sweat_smile" title="sweat_smile"></i> <i ng-click="smilieSelected('sweat')" class="emoticon emoticon-sweat" title="sweat"></i> <i ng-click="smilieSelected('wow')" class="emoticon emoticon-wow" title="wow"></i> <i ng-click="smilieSelected('disappointed_relieved')" class="emoticon emoticon-disappointed_relieved" title="disappointed_relieved"></i> <i ng-click="smilieSelected('weary')" class="emoticon emoticon-weary" title="weary"></i> <i ng-click="smilieSelected('pensive')" class="emoticon emoticon-pensive" title="pensive"></i> <i ng-click="smilieSelected('disappointed')" class="emoticon emoticon-disappointed" title="disappointed"></i> <i ng-click="smilieSelected('confounded')" class="emoticon emoticon-confounded" title="confounded"></i> <i ng-click="smilieSelected('fearful')" class="emoticon emoticon-fearful" title="fearful"></i> <i ng-click="smilieSelected('cold_sweat')" class="emoticon emoticon-cold_sweat" title="cold_sweat"></i> <i ng-click="smilieSelected('persevere')" class="emoticon emoticon-persevere" title="persevere"></i> <i ng-click="smilieSelected('cry')" class="emoticon emoticon-cry" title="cry"></i> <i ng-click="smilieSelected('sob')" class="emoticon emoticon-sob" title="sob"></i> <i ng-click="smilieSelected('joy')" class="emoticon emoticon-joy" title="joy"></i> <i ng-click="smilieSelected('astonished')" class="emoticon emoticon-astonished" title="astonished"></i> <i ng-click="smilieSelected('scream')" class="emoticon emoticon-scream" title="scream"></i> <i ng-click="smilieSelected('neckbeard')" class="emoticon emoticon-neckbeard" title="neckbeard"></i> <i ng-click="smilieSelected('tired_face')" class="emoticon emoticon-tired_face" title="tired_face"></i> <i ng-click="smilieSelected('angry')" class="emoticon emoticon-angry" title="angry"></i> <i ng-click="smilieSelected('rage')" class="emoticon emoticon-rage" title="rage"></i> <i ng-click="smilieSelected('triumph')" class="emoticon emoticon-triumph" title="triumph"></i> <i ng-click="smilieSelected('sleepy')" class="emoticon emoticon-sleepy" title="sleepy"></i> <i ng-click="smilieSelected('yum')" class="emoticon emoticon-yum" title="yum"></i> <i ng-click="smilieSelected('mask')" class="emoticon emoticon-mask" title="mask"></i> <i ng-click="smilieSelected('sunglasses')" class="emoticon emoticon-sunglasses" title="sunglasses"></i> <i ng-click="smilieSelected('dizzy_face')" class="emoticon emoticon-dizzy_face" title="dizzy_face"></i> <i ng-click="smilieSelected('imp')" class="emoticon emoticon-imp" title="imp"></i> <i ng-click="smilieSelected('smiling_imp')" class="emoticon emoticon-smiling_imp" title="smiling_imp"></i> <i ng-click="smilieSelected('neutral_face')" class="emoticon emoticon-neutral_face" title="neutral_face"></i> <i ng-click="smilieSelected('no_mouth')" class="emoticon emoticon-no_mouth" title="no_mouth"></i> <i ng-click="smilieSelected('innocent')" class="emoticon emoticon-innocent" title="innocent"></i> <i ng-click="smilieSelected('alien')" class="emoticon emoticon-alien" title="alien"></i> <i ng-click="smilieSelected('yellow_heart')" class="emoticon emoticon-yellow_heart" title="yellow_heart"></i> <i ng-click="smilieSelected('blue_heart')" class="emoticon emoticon-blue_heart" title="blue_heart"></i> <i ng-click="smilieSelected('purple_heart')" class="emoticon emoticon-purple_heart" title="purple_heart"></i> <i ng-click="smilieSelected('heart')" class="emoticon emoticon-heart" title="heart"></i> <i ng-click="smilieSelected('green_heart')" class="emoticon emoticon-green_heart" title="green_heart"></i> <i ng-click="smilieSelected('broken_heart')" class="emoticon emoticon-broken_heart" title="broken_heart"></i>
+                </div>
+                <div class="uploadFile" ngf-select="sendFile(video, 'video')" ng-model="video" name="video" >
+                    <i class="fa fa-file-video-o" data-toggle="tooltip" accept="video/*"
+                          data-placement="top" title="Envoyer un fichier vidéo"></i>
+                </div>
+                <div class="uploadFile" ngf-select="sendFile(son, 'audio')" ng-model="son" name="son"  ngf-max-size="20MB" >
+                    <i class="fa fa-file-audio-o" data-toggle="tooltip" accept="audio/*"
+                          data-placement="top" title="Envoyer un fichier audio"></i>
+                </div>
+                <div class="uploadFile" ngf-select="sendFile(image, 'image')" ng-model="image" name="image" ngf-max-size="50MB" >
+                    <i class="fa fa-image prefix" data-toggle="tooltip" accept="image/*"
+                          data-placement="top" title="Envoyer une image"></i>
+                </div>
+                <div class="uploadFile" ngf-select="sendFile(document, 'doc')" ng-model="document" name="document" accept=".pdf,.docx, .xlsx, .doc, .odt, .xml, .xlsx, .sql, .pptx"
+                     ngf-max-size="50MB" >
+                    <i class="fa fa-file prefix" data-toggle="tooltip" data-placement="top"
+                          title="Envoyer un document"></i>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

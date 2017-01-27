@@ -1,0 +1,163 @@
+<div class="row" >
+	<div>
+		<button ng-click="afficherFormulaireCreerUser()" class="btn btn-primary">Ajouter Utilisateur <i class="fa fa-plus"></i> </button>
+		<button class="btn btn-primary" ng-click="afficheCreerDep()">Nouveau département <i class="fa fa-plus"></i> </button>
+	</div>
+
+	<form  ng-show="creerUserVisible" ng-submit="ajouterUtilisateur()">
+		<div class="card card-block">
+			<div class="md-form">
+				<i class="fa fa-envelope prefix"></i>
+				<input type="text" id="newemail" class="form-control"ng-model="newUser.email" required="required">
+				<label for="newnom" >Email</label>
+			</div>
+			<div class="md-form">
+				<i class="fa fa-user prefix"></i>
+				<input type="text" id="newnom" class="form-control"ng-model="newUser.nom" required="required">
+				<label for="newnom" >Nom</label>
+			</div>
+			<div class="md-form">
+				<i class="fa fa-user prefix"></i>
+				<input type="text" id="newprenom" class="form-control"ng-model="newUser.prenom" required="required">
+				<label for="newprenom">Prénom</label>
+			</div>
+			<div class="md-form">
+				<i class="fa fa-lock prefix"></i>
+				<input type="password" minlength="4" id="newmdp" class="form-control"ng-model="newUser.mdp" required="required">
+				<label for="newmdp" >Mot de passe</label>
+			</div>
+			<div class="md-form">
+				<i class="fa fa-lock prefix"></i>
+				<select class="form-control" id="newdep" ng-model="newUser.departement" required="required">
+					<option value="" disabled>Choisir un département</option>
+					<option ng-repeat="dep in departements" ng-if="dep.actif == 'activé' " value="{{dep.nom}}">{{dep.nom}}</option>
+				</select>
+
+			</div>
+			<div class="md-form">
+				<i class="fa fa-lock prefix"></i>
+				<input type="number" value="1" max="3" min="1" id="newacces" class="form-control"ng-model="newUser.acces" required="required">
+				<label for="newacces" >Niveau d'accès</label>
+			</div>
+			<div class="text-xs-center">
+				<button type="submit" class="btn btn-default" >Enregistrer</button>
+			</div>
+		</div>
+	</form>
+	<form ng-show="visibleCreerDep" ng-submit="creerDep()">
+		<div class="card card-block">
+			<div class="md-form">
+				<input type="text" ng-model="newDep.nom" placeholder="Nom du département" required="required" class="form-control">
+			</div>
+			<div class="md-form">
+				<textarea type="text" min-length="5" ng-model="newDep.description"  placeholder="Description du département"  class="md-textarea" required="required"></textarea>
+			</div>
+		</div>
+		<div class="text-xs-center">
+			<button type="submit" class="btn btn-flat waves-effect btn-normal"  >Ajouter le département</button>
+		</div>
+	</form>
+</div>
+<hr>
+<h3>Liste des départements</h3>
+<table class="table table-hover">
+	<thead>
+		<th>Nom</th>
+		<th>Description</th>
+		<th></th>
+	</thead>
+	<tbody>
+		<tr ng-repeat="dep in departements">
+			<td>{{dep.nom}}</td>
+			<td>{{dep.description}}</td>
+			<td>
+				<button class="btn btn-danger btn-sm" ng-click="deleteDep(dep._id)"><i class="fa fa-minus" style="color: white"></i></button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<hr>
+<h3>Liste des utilisateurs</h3>
+
+<table class="table table-hover">
+	<thead>
+		<th>Nom</th>
+		<th>Prenom</th>
+		<th>Actif</th>
+		<th>Département</th>
+		<th>Niveau d'accès</th>
+		<th>email</th>
+		<th>Options</th>
+	</thead>
+	<tr ng-repeat="user in users | orderBy : 'actif' " style="vertical-align: middle">
+		<td>{{user.nom}}</td>
+		<td>{{user.prenom}}</td>
+		<td>{{user.actif}}</td>
+		<td>{{user.departement}}</td>
+		<td>{{user.acces}}</td>
+		<td>{{user.email}}</td>
+		<td>
+			<button class="btn btn-sm btn-default" type="button" data-toggle="modal" data-target="#myModal"
+					ng-click="editUserFormVisible(user._id)"><span class="fa fa-pencil"></span></button>
+			<button class="btn btn-sm btn-danger" ng-click="deleteUser(user._id)"><span class="fa fa-user-times"></span></button>
+		</td>
+	</tr>
+</table>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h5 class="modal-title text-xs-center" id="myModalLabel">  <i class="fa fa-pencil"></i> {{editedUser.nom}} {{editedUser.prenom}}</h5>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="card card-block">
+						<div class="md-form">
+							<label for="editedUseremail" >Email*</label>
+							<input type="text" id="editedUseremail" class="form-control"ng-model="editedUser.email" required>
+						</div>
+						<div class="md-form">
+							<label for="editedUsernom" >Nom*</label>
+							<input type="text" id="editedUsernom" class="form-control"ng-model="editedUser.nom" required>
+						</div>
+						<div class="md-form">
+							<label for="editedUserprenom">Prénom*</label>
+							<input type="text" id="editedUserprenom" class="form-control"ng-model="editedUser.prenom" required>
+						</div>
+						<div class="md-form">
+							<label for="editedUsermdp" >Mot de passe*</label>
+							<input type="password" minlength="4" id="editedUsermdp" class="form-control"ng-model="editedUser.mdp" required>
+						</div>
+						<div class="md-form">
+							<label for="editedUseracces">Niveau d'accès*</label>
+							<input type="number" value="1" max="3" min="1" id="editedUseracces" class="form-control"ng-model="editedUser.acces">
+						</div>
+						<div class="md-form">
+							<select id="editedUserdep" class="form-control"ng-model="editedUser.dep">
+								<option value="" disabled selected>{{editedUser.departement}}</option>
+								<option ng-repeat="dep in departements" ng-if="dep.nom != editedUser.departement" value="{{dep.nom}}">{{dep.nom}}</option>
+							</select>
+						</div>
+						<div class="md-form">
+							<select id="editedUseractif" class="form-control" ng-model="editedUser.actif">
+								<option>activé</option>
+								<option>désactivé</option>
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="editUser()">Enregistrer</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row" ng-show="editUserVisible">
+	<hr>
+	<h3></h3>
+</div>

@@ -1,0 +1,67 @@
+<div ui-view>
+    <button class="btn btn-primary" ng-click="afficherFormCreerProjet()"> Créer un projet </button>
+    <!--Form without header-->
+    <form ng-submit="creerProjet()">
+        <div class="card" ng-show="formProjetVisible">
+            <div class="card-block">
+                <!--Header-->
+                <div class="text-xs-center">
+                    <h5> Créer un projet</h5>
+                    <hr>
+                </div>
+                <!--Body-->
+                <div class="md-form">
+                    <i class="fa fa-pencil prefix"></i>
+                    <input type="text" minlength="4" ng-model="newProjet.nom" class="form-control" placeholder="Nom du projet" required="required">
+                </div>
+                <div class="md-form">
+                    <i class="fa fa-pencil prefix"></i>
+                    <input type="number" max="3" min="1" value="1" ng-model="newProjet.priorite" class="form-control" id="inputpriorite" required="required">
+                    <label for="inputpriorite">Priorité</label>
+                </div>
+                <div class="md-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ng-datepicker  class="inputrequired" ng-model="newProjet.dateCreation" view-format="Do MMMM YYYY" placeholder="Date de début">
+                            </ng-datepicker>
+                        </div>
+                        <div class="col-md-6">
+                            <i class="fa fa-calendar prefix "></i>
+                            <ng-datepicker class="inputrequired" ng-model="newProjet.dateFin" view-format="Do MMMM YYYY" placeholder="Date de fin du projet" >
+                            </ng-datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="md-form">
+                    <i class="fa fa-pencil prefix"></i>
+                    <textarea type="text" minlength="4" ng-model="newProjet.description"  placeholder="Description du projet"  class="md-textarea" required="required"></textarea>
+                </div>
+                <div class="md-form">
+                    <select class="form-control" id="inputchef" ng-model="newProjet.createur" required="required">
+                        <option value="" disabled selected>Choisir le chef de projet</option>
+                        <option ng-repeat="user in users" value="{{user._id}}">{{user.nom}} {{user.prenom}}</option>
+                    </select>
+                </div>
+                <div class="text-xs-center">
+                    <button  type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+
+    <div class="card projet_view  text-xs-center col-md-4 col-sm-4 liste" ng-repeat="projet in projets | orderBy : '-priorite'" >
+        <div class="card-header white-text " >
+            {{projet.nom}}
+        </div>
+        <div class="card-block">
+            <p class="card-text">Chef de projet: {{projet.createur.nom}} {{projet.createur.prenom}}</p>
+            <p class="card-text">Du  {{projet.dateCreation | date:'HH:mm dd/MM/yyyy' }} au {{projet.dateFin  | date:'dd/MM/yyyy'}}</p>
+            <p class="card-text">Projet à {{projet.statut}}% de réalisation</p>
+            <p class="card-text">Projet de priorité {{projet.priorite}}</p>
+        </div>
+        <div ui-sref="projets.projet({projetid: projet._id})" class="btn-flat waves-effect card-footer text-muted white-text" >
+            <span class="fa fa-eye "></span>    Consulter
+        </div>
+    </div>
+</div>

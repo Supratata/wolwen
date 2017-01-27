@@ -1,0 +1,95 @@
+<div class="row" xmlns="http://www.w3.org/1999/html">
+	<h4>Créer un groupe de chat:</h4>
+	<form class="form-inline" ng-submit="creerGroupe()">
+		<div class="form-group">
+			<input type="text" id="groupe" class="form-control" ng-model="nomNouveauGroupe" placeholder="Nom du groupe">
+		</div>
+		<input class="btn btn-default" type="submit" value="Valider">
+	</form>
+</div>
+<hr>
+<div class="row">
+	<div class="mesgroupes" ng-repeat="groupe in mesgroupes">
+		<div  class="row">
+			<h4>Groupe: </h4>
+			<p class="nom_groupe">
+				<span>{{groupe.nom}}</span>
+			</p>
+		</div>
+		<div class="row">
+			<h4>Membres: </h4>
+			<p ng-repeat="membre in groupe.membres">
+				<span class="nomprenommembre">{{membre.nom}} {{membre.prenom }}</span>
+				<span class="accesmembre">{{membre.acces}}</span>
+				<span ng-if=" groupe.createur != membre._id &&  groupe.acces == 'admin' ">
+					<button type="button" class="btn btn-default btn-xs" ng-click="sortirMembre(groupe._id,membre._id)">
+						<i class="fa fa-remove"></i>
+					</button>
+				</span>
+			</p>
+		</div>
+		<div class="row options">
+			<h4>Options</h4>
+			<p ng-repeat="membre in groupe.membres" ng-if="membre.acces == 'admin' && membre._id ==  groupe.id">
+				<button ng-click="formulaireAjouterMembre(groupe._id)"  type="button" class="btn btn-default btn-group-sm">
+					<i class="fa fa-user"></i>
+				</button>
+				<div ng-show="afficherAdherant && ( affiche == groupe._id)"  class="listeAdherant">
+					<div ng-repeat="adherant in adherants" >
+						<p style="background-color: #03a9f4">{{adherant.nom}}  {{adherant.prenom}}</p>
+						<br/>
+						<button ng-click="ajouterMembre(groupe._id, adherant._id, 'admin')" type="button" class="btn btn-default btn-group-sm">Administrateur</button>
+						<button ng-click="ajouterMembre(groupe._id, adherant._id, 'user')" type="button" class="btn btn-default btn-group-sm">Membre</button>
+					</div>
+				</div>
+				<span ng-if="groupe.createur == groupe.id">
+					<button ng-click="deleteGroupe(groupe._id)" type="button" class="btn btn-danger btn-group-sm">
+						<i class="fa fa-remove"></i>
+					</button>
+					<button data-toggle="modal" data-target="#myModal" ng-click="affichermodifierGroupe(groupe.nom, groupe._id)" type="button" class="btn btn-default btn-group-sm">
+						<i class="fa fa-pencil"></i>
+					</button>
+				</span>
+			</p>
+		</div>
+	</div>
+</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Modification du groupe {{titreModifier}}</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-inline" >
+						<div class="form-group">
+							<input type='text' placeholder="Nouveau Nom" class="form-control" ng-model="newNomGroupe.nom" >
+							<input type='hidden'  ng-model="newNomGroupe.id" >
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="modifierGroupe()">Enregistrer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<table class="table table-hover" ng-if="myacces == '3'">
+		<thead>
+			<th>Les Groupes</th>
+			<th>Date de création</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="groupe in lesgroupes">
+				<td>{{groupe.nom}}</td>
+				<td>{{groupe.date | date:'dd/MM/yyyy'}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+

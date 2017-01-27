@@ -1,0 +1,520 @@
+<input type="hidden" id="idprojet" value="<%= idprojet %>">
+
+<div id="zoneTache">
+    <div ng-show="formEdit">
+        <form ng-submit="updateProjet()">
+            <div class="card card-block colorBody">
+                <div class="md-form">
+                    <i>Projet</i>
+                    <input type="text" minlength="4" required="required" ng-model="projetAfficher.nom" id="projetAffichernom" class="form-control nonactive" >
+                </div>
+                <div class="md-form">
+                    <i>Priorité</i>
+                    <input type="number" min="1" max="3" required="required" ng-model="projetAfficher.priorite" class="form-control  nonactive">
+                </div>
+                <div class="md-form">
+                    <i>Etat d'avancement</i>
+                    <input type="text" value="{{projetAfficher.statut}}%" class="form-control" disabled>
+                </div>
+                <div class="md-form">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <i>Date de lancement</i>
+                            <ng-datepicker ng-model="projetAfficher.dateCreation"  view-format="Do MMMM YYYY" class="inputrequired datedisabled"> </ng-datepicker>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <i>Date de fin</i>
+                            <ng-datepicker ng-model="projetAfficher.dateFin"  view-format="Do MMMM YYYY" class="inputrequired datedisabled" ></ng-datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="md-form">
+                    <i> Chef de projet</i>
+                    <select class="form-control nonactive" id="inputchef" ng-model="projetAfficher.newCreateur">
+                        <option value="" disabled selected>{{projetAfficher.createur.nom}} {{projetAfficher.createur.prenom}}</option>
+                        <option ng-repeat="membre in projetAfficher.membres" value="{{membre._id}}">{{membre.nom}} {{membre.prenom}}</option>
+                    </select>
+                </div>
+                <div class="md-form">
+                    <i>Description</i>
+                    <textarea type="text" ng-model="projetAfficher.description"  placeholder="Description du projet"  class="md-textarea nonactive" required="required"></textarea>
+                </div>
+                <div class="text-xs-center">
+                    <button type="submit" class="btn btn-flat btn-normal waves-effect nonactive">Mettre à jour</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="card card-block colorBody">
+            <i>Membres du projet <button class="fa fa-user-plus btn-normal nonactive" style="float: right;" ng-click="ajouterMembre()" data-toggle="modal" data-target="#addadherant"></button></i>
+            <ul class="list-group" >
+                <li class="list-group-item membreProjet" ng-repeat="membre in projetAfficher.membres" repeat-end="onEnd()">
+                    <img ng-src="{{path + membre.photo}}" class="img-circle"> {{membre.nom}} {{membre.prenom}}
+                    <span class="pull-xs-right">
+                        <button class="nonactive" ng-if="projetAfficher.createur._id != membre._id" ng-click="retirerDuProjet(membre._id)">
+                            <span class="fa fa-user-times "></span>
+                        </button>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <hr style="background-color: black">
+    </div> <!--Edit le projet-->
+
+    <div ng-show="adminTache" >
+        <div class="active">
+            <button class="btn-flat waves-effect ajouterFichier btn-normal" ng-click="afficherCreerTache()" >
+                <i ng-class="{'fa-plus': !visibleCreerTache, 'fa-close': visibleCreerTache}" class="fa"></i>
+            </button>
+            <div ng-show="visibleCreerTache" class="card card-block">
+                <form ng-submit="creerTache('new')">
+                    <div class="md-form">
+                        <i class="fa fa-pencil prefix"></i>
+                        <input type="text" ng-model="newTache.nom" required="required" placeholder="Nom de la tache" class="form-control">
+                    </div>
+                    <div class="md-form">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <ng-datepicker ng-model="newTache.dateDebut" view-format="Do MMMM YYYY" placeholder="Date de début"  required="required"> </ng-datepicker>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <i class="fa fa-calendar prefix"></i>
+                                <ng-datepicker ng-model="newTache.dateFin" view-format="Do MMMM YYYY" placeholder="Date de fin" value="" required="required"> </ng-datepicker>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a title="Plus d'options" ng-click="afficherPlusOption('new')" id="plusnewoptions" style="float: right" class="btn-flat waves-effect"><i class="fa fa-plus"></i></a>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'new'">
+                        <textarea type="text" ng-model="newTache.description" placeholder="Description" class="md-textarea"></textarea>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'new'">
+                        <select class="form-control" id="inputchef" ng-model="newTache.responsable">
+                            <option value="" disabled selected>Selectionner le responsable de la tâche</option>
+                            <option ng-repeat="membre in projetAfficher.membres" value="{{membre._id}}">{{membre.nom}} {{membre.prenom}}</option>
+                        </select>
+                    </div>
+                    <div class="md-form range-field" ng-show="plusOptions == 'new'">
+                        <input type="number" min="0" max="100" class="form-control" ng-model="newTache.statut" placeholder="Niveau d'avancement" >
+                    </div>
+                    <!--<div class="md-form" ng-show="plusOptions == 'new'">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <i class="fa fa-calendar prefix"></i>
+                                <ng-datepicker ng-model="newTache.rappel.date" view-format="Do MMMM YYYY" placeholder="Date de rappel" > </ng-datepicker>
+                            </div>
+                            <div class="col-md-3 col-sm-3">
+                                <i class="fa fa-calendar prefix"></i>
+                                <ng-timepicker ng-model="newTache.rappel.heure" placeholder="Date de rappel" > </ng-timepicker>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <input type="text" ng-model="newTache.rappel.text" class="form-control" placeholder="Message"/>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="md-form" ng-show="plusOptions == 'new'">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <input type="number" min="1" ng-model="newTache.numero" class="form-control" placeholder="Numéro d'ordre" >
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <input type="number" min="1" max="3" ng-model="newTache.priorite" class="form-control" placeholder="Niveau de priorité"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'new'">
+                        <input type="text" ng-model="newTache.commentaires" class="form-control" placeholder="Laisser un commentaire">
+                    </div>
+                    <div class="text-xs-center">
+                        <button type="submit" class="btn-flat btn-normal waves-effect">Creer la tâche</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-bordered" style="background-color: inherit;">
+            <tbody class="adminTache">
+            <tr ng-repeat="tache in taches | orderBy : 'numero'">
+                <th scope="row" style="width: 1%">{{tache.numero}}</th>
+                <td>
+                    <div>
+                        <button class="btn-normal btn-flat waves-effect" ng-click="openTache(tache)">
+                            <span>{{tache.nom}}</span>
+                        </button>
+                        <span class="pull-xs-right detailTache">
+                            <i>{{tache.priorite}},</i>
+                            <i>{{tache.statut}}%,</i>
+                            <i>{{tache.dateDebut | date:'dd/MM/yyyy'}}-{{tache.dateFin | date:'dd/MM/yyyy'}}</i>
+                            <img ng-if="tache.responsable._id != myid" style="height: 28px;border-radius: 50%;display: inline;" ng-src="{{path + tache.responsable.photo}}" alt="">
+                            <i role="button" ng-if="projetAfficher.createur._id == myid" style="margin-left: 10px" id="dropdownMenu{{tache._id}}"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="fa fa-minus ">
+                            </i>
+                            <span class="deleteTache dropdown-menu dropdown-primary " aria-labelledby="dropdownMenu{{tache._id}}" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                <a class="dropdown-item btn-danger white-text" ng-click="deleteTache(tache)">Supprimer</a>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detailTache" ng-show="parentOpen._id == tache._id">
+                        <button style="width: auto;" class="btn-normal btn-flat waves-effect" ng-if="tacheOpen.responsable._id == myid || projetAfficher.createur._id == myid" data-toggle="modal" data-target="#sousTache"><i class="fa fa-plus"></i></button>
+                        <!--<table class="table table-bordered card colorBody" >-->
+                        <ul class="adminSousTache adminTache card">
+                            <li ng-repeat="soustache in tache.soustaches | orderBy : 'numero'">
+                                <div style="float: left; font-weight:700; ">{{soustache.numero}}</div>
+                                <div>
+                                    <div>
+                                        <button class="btn-normal btn-flat waves-effect" ng-click="openSousTache(soustache)">
+                                            <span>{{soustache.nom}}</span>
+                                        </button>
+                                        <span class="pull-xs-right detailTache">
+                                            <i>{{soustache.priorite}},</i>
+                                            <i>{{soustache.statut}}%,</i>
+                                            <i>{{soustache.dateDebut | date:'dd/MM/yyyy'}}-{{soustache.dateFin | date:'dd/MM/yyyy'}}</i>
+                                            <img ng-if="soustache.responsable._id != myid" style="height: 28px;display: inline;border-radius: 50%;" ng-src="{{path + soustache.responsable.photo}}" alt="">
+                                            <i role="button" ng-if="tacheOpen.responsable._id == myid || projetAfficher.createur._id == myid" style="margin-left: 10px" class="fa fa-minus"
+                                               id="dropdownMenu{{soustache._id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                            <span class="dropdown-menu dropdown-primary deleteTache" aria-labelledby="dropdownMenu{{soustache._id}}" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                <a class="dropdown-item btn-danger white-text" ng-click="deleteTache(soustache)">Supprimer</a>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="detailTache" ng-show="soustacheOpen == soustache._id">
+                                        <p>Description: {{soustache.description}}</p>
+                                        <p>{{soustache}}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <!--</table>-->
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <hr style="background-color: black">
+    </div>
+
+    <div ng-show="filesProjet">
+        <h6>
+            Fichiers du projets
+            <button class="btn-flat waves-effect ajouterFichier" ng-click="ajouterFichier(false)"><span ng-class="{'fa-plus': !formAjouterFichierVisible, 'fa-close':formAjouterFichierVisible}" class="fa"></span></button>
+        </h6>
+        <!--<input type="file" required="required" style="border: none;" ngf-select  ng-model="fichier" name="file" class="form-control" ngf-max-size="2048MB" accept=".zip,.7z,.tar,.rar">-->
+        <form class="card card-block col-md-12 col-sm-12 colorBody" ng-submit="saveFile();" ng-show="formAjouterFichierVisible">
+            <div class="md-form" ng-show="descriptionFile">
+                <i class="fa fa-pencil prefix"></i>
+                <textarea type="text" ng-model="newFile.description" placeholder="Description" class="md-textarea" required="required"></textarea>
+            </div>
+            <div class="row">
+                <div class="md-form col-md-5 col-lg-5 col-sm-5">
+                    <span class="btn btn-normal btn-flat waves-effect"  flow-btn >
+                        <i class="fa fa-file"></i>
+                        Télécharger un fichier vers le serveur
+                    </span>
+                </div>
+                <div class="md-form col-md-5 col-lg-5 col-sm-5">
+                    <span class="btn btn-normal btn-flat waves-effect" flow-btn flow-directory ng-show="$flow.supportDirectory && !descriptionFile">
+                        <i class="fa fa-folder-open"></i>
+                        Télécharger un dossier vers le serveur
+                    </span>
+                </div>
+                <div class="col-md-2 col-lg-2 col-sm-2">
+                    {{$flow.getDone()}} fichiers sélectionnés
+                </div>
+            </div>
+            <div class="text-xs-center">
+                <button type="submit" class=" btn btn-flat waves-effect btn-normal">Enregistrer</button>
+            </div>
+             <div>
+                 <progress class="progress" value="{{taux}}" max="100" style="height: 3px;"></progress>
+             </div>
+        </form>
+        <hr>
+        <div style="padding: 10px; border: 1px solid #aaa;">
+            <ul class="breadcrumb arbre">
+                <li ng-repeat="b in breadcrums" ng-class="{ active: $last }">{{ b }}</li>
+                <li class="pull-xs-right">
+                    <a ng-href="projet/download/tree_1_2_{{downloadtree}}" download="{{downloadname}}"><i class="fa fa-cloud-download"></i></a>
+                    <a ng-click="ajouterFichier(true)"><i class="fa fa-cloud-upload"></i></a>
+                    <a class="fa fa-remove" id="dropdownDelNode" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                    </a>
+                    <span class="deleteTache dropdown-menu dropdown-primary " aria-labelledby="dropdownDelNode" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                        <a class=" dropdown-item btn-danger white-text" ng-click="deleteNode(downloadtree)">Supprimer</a>
+                    </span>
+                </li>
+            </ul>
+            <div tree-view="structure" tree-view-options="options"></div>
+        </div>
+        <hr>
+        <div ng-repeat="projetfile in filesprojets">
+            <div class="card col-md-4 col-sm-4 fileUpload" >
+                <div>
+                    <img class="img-fluid " ng-src="{{path + projetfile.preview}}" alt="Card image cap">
+                    <div style="padding-top: 10px; font-size: 0.8em">
+                        <p class="card-text" style="margin-bottom: 0px;">{{projetfile.createur.nom}} {{projetfile.createur.prenom}}</p>
+                        <p class="card-text" style="margin-bottom: 0px;">{{projetfile.dateEnvoi | date:' HH:mm:ss dd/MM/yyyy'}}</p>
+                        <p class="card-text" style="margin-bottom: 0px;">
+                            <span ng-if="projetfile.tache">Tâche: {{projetfile.tache.nom}}</span>
+                            <span ng-if="!projetfile.tache">Projet:{{nom}}</span>
+                        </p>
+                    </div>
+                </div>
+                <br>
+                <div class="card-block" style="padding: 0px">
+                    <p class="card-text">{{projetfile.description}}</p>
+                </div>
+                <div class="card-footer telecharger">
+                    <a ng-href="projet/download/{{projetfile.fichier}}" class="btn-flat waves-effect text-muted " download="{{projetfile.fichier}}">Télécharger</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="gantt">
+        <div data="tasks" dhx-gantt style="height:400px; width:100%;">
+            <div gantt-column label="Tâches">{{task.text | lowercase}}</div>
+            <div gantt-column align="center" width="200"  label="Durée">{{task.duration}}</div>
+
+            <div gantt-template="task_text">
+                 {{task.text | uppercase}}
+            </div>
+        </div>
+    </div>
+
+    <div class="control">
+        <div>
+            <button type="button" class="btn-flat waves-effect titre_projet" ng-click="editProjet()">
+                {{nom}}
+            </button>
+        </div>
+        <div class="btnControl">
+            <ul>
+                <li class="adminTache"> <button class="btn-flat waves-effect" ng-click="visibleTache()"> Tâches </button></li>
+                <li class="adminFiles"> <button class="btn-flat waves-effect" ng-click="visibleFile()"> Fichiers </button></li>
+                <li class="adminGantt"> <button class="btn-flat waves-effect" ng-click="visibleGantt()"> Diagramme de Gantt </button></li>
+                <br>
+                <li class="closeProjet"> <button class="btn-flat waves-effect" ng-click="closeProjet()"> Fermer le projet </button></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div ng-show="zoneTacheDetail" class="separation"></div>
+
+<div ng-show="zoneTacheDetail" class="col-md-4 col-sm-4 zoneTacheDetail">
+    <div class="row">
+        <i class="fa fa-remove" style="font-size: 1.5em; float: right;" role="button" ng-click="closeDetail()"></i>
+        <span style="color:red;">{{tacheOpen.nom}}</span>
+        <hr style="background-color: black; margin: 0px 0px 10px 0px;">
+    </div>
+    <div class="row" ng-if="tacheOpen.responsable._id == myid || projetAfficher.createur._id == myid">
+        <form ng-submit="updateTache();">
+            <div class="form-header text-xs-center">
+                <h6><i class="fa fa-pencil"></i> Editer la tâche:</h6>
+            </div>
+            <div class="md-form" ng-show="zoneTacheDetailEditable">
+                <input type="text" ng-model="tacheOpen.nom" required="required" placeholder="Nom de la tache" class="form-control">
+            </div>
+            <div class="md-form" ng-show="zoneTacheDetailEditable">
+                <textarea type="text" ng-model="tacheOpen.description" placeholder="Description" required="required" class="md-textarea"></textarea>
+            </div>
+            <div class="md-form" ng-show="zoneTacheDetailEditable">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <ng-datepicker ng-model="tacheOpen.dateDebut" view-format="Do MMMM YYYY" class="inputrequired" placeholder="Date de début"  required="required"> </ng-datepicker>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <ng-datepicker ng-model="tacheOpen.dateFin" view-format="Do MMMM YYYY" class="inputrequired" placeholder="Date de fin" value="" required="required"> </ng-datepicker>
+                    </div>
+                </div>
+            </div>
+            <div class="md-form range-field">
+                <i style="font-size: 0.7em">niveau d'avancement</i>
+                <input type="number" min="0" max="100" ng-model="tacheOpen.statut" required="required" class="form-control" placeholder="Niveau d'avancement" >
+            </div>
+            <!--<div class="md-form">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <ng-datepicker ng-model="tacheOpen.rappel.date" view-format="Do MMMM YYYY" placeholder="Date de rappel" > </ng-datepicker>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input type="text" ng-model="tacheOpen.rappel.text" class="form-control" placeholder="Message"/>
+                    </div>
+                </div>
+            </div>-->
+            <div class="md-form" ng-show="zoneTacheDetailEditable">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <input type="number" min="1" ng-model="tacheOpen.numero" required="required" id="tacheOpennumero" class="form-control" placeholder="Numéro d'ordre" >
+                        <label for="tacheOpennumero">Numéro d'ordre</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input type="number" min="1" max="3" ng-model="tacheOpen.priorite" required="required" id="tacheOpenpriorite" class="form-control" placeholder="Niveau de priorité"/>
+                        <label for="tacheOpenpriorite">Niveau de priorité</label>
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs-center">
+                <button type="submit"  class="btn-flat btn btn-normal waves-effect">Enregistrer</button>
+            </div>
+        </form>
+        <hr style="background-color: black">
+    </div>
+    <div class="row ">
+        <div class="form-header text-xs-center">
+            <h6> Commentaires</h6>
+        </div>
+        <div class="tacheComment">
+            <p ng-repeat="comment in tacheOpen.commentaires">
+                <span>{{comment.commentaire}}</span>
+                <span class="pull-xs-right">
+                    <img ng-src="{{path + comment.auteur.photo}}" alt="{{comment.auteur.nom}}">
+                    <i role="button" ng-if="comment.auteur._id == myid || tacheOpen.responsable == myid" ng-click="deleteComment(comment);" style="margin-left: 10px;" class="fa fa-minus"></i>
+                </span>
+            </p>
+        </div>
+        <div>
+            <form ng-submit="addComment()">
+                <div class="md-form">
+                    <input type="text" placeholder="Ajouter un commentaire" ng-model="newCommentaire" class="form-control" required="required">
+                </div>
+            </form>
+        </div>
+        <hr style="background-color: black">
+    </div>
+    <div class="row">
+        <div class="form-header text-xs-center">
+            <h6>Fichiers</h6>
+        </div>
+        <div class="tacheComment">
+            <p ng-repeat="file in tacheOpen.fichiers">
+                <span>
+                    <a href="{{file.fichier}}" download="{{file.fichier}}"><img class="img-fluid " ng-src="{{path + file.preview}}" alt="Card image cap"></a>
+                </span>
+                <span>{{file.description}}</span>
+                <span class="pull-xs-right">
+                    <img ng-src="{{path + file.createur.photo}}" alt="{{file.createur.nom}}">
+                    <i role="button" ng-if="file.createur._id == myid || tacheOpen.responsable == myid" ng-click="deleteFile(file);" style="margin-left: 10px;" class="fa fa-minus"></i>
+                </span>
+            </p>
+        </div>
+        <div>
+            <form ng-submit="addFile()">
+                <div class="md-form">
+                    <input type="text" placeholder="Description du fichier" ng-model="tacheFile.description" class="form-control" required="required">
+                </div>
+                <div class="md-form">
+                    <input type="file" style="border: none;" ngf-select required="required" ng-model="tacheFile.fichier" name="file" class="form-control" ngf-max-size="50MB" accept=".zip,.7z,.tar,.rar">
+                </div>
+                <div class="text-xs-center">
+                    <button type="submit" class="btn-flat waves-effect btn btn-normal" >Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sousTache" tabindex="-1" role="dialog" aria-labelledby="sousTacheLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4  class="modal-title text-xs-center" style="font-size: 1em;" id="sousTacheLabel">Création d'une sous tâche</h4>
+            </div>
+            <div class="modal-body card card-block">
+                <form >
+                    <div class="md-form">
+                        <i class="fa fa-pencil prefix"></i>
+                        <input type="text" ng-model="newSousTache.nom" required="required" placeholder="Nom de la tache" class="form-control">
+                    </div>
+                    <div class="md-form">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <ng-datepicker ng-model="newSousTache.dateDebut" id="newSousTachedateDebut" view-format="Do MMMM YYYY" class="inputrequired" placeholder="Date de début"  required="required"> </ng-datepicker>
+                                <span ng-show="date_deb_validator" class="validator">Erreur date hors intervalle</span>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <ng-datepicker ng-model="newSousTache.dateFin" id="newSousTachedateFin" view-format="Do MMMM YYYY" class="inputrequired" placeholder="Date de fin" value="" required="required"> </ng-datepicker>
+                                <span ng-show="date_fin_validator" class="validator">Erreur date hors intervalle</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a title="Plus d'options" ng-click="afficherPlusOption('sous')" id="plussousoptions" style="float: right" class="btn-flat waves-effect"><i class="fa fa-plus"></i></a>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'sous'">
+                        <textarea type="text" ng-model="newSousTache.description" placeholder="Description" class="md-textarea"></textarea>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'sous'">
+                        <select class="form-control" id="inputchef" ng-model="newSousTache.responsable">
+                            <option value="" disabled selected>Selectionner le responsable de la tâche</option>
+                            <option ng-repeat="membre in projetAfficher.membres" value="{{membre._id}}">{{membre.nom}} {{membre.prenom}}</option>
+                        </select>
+                    </div>
+                    <div class="md-form range-field" ng-show="plusOptions == 'sous'">
+                        <input type="number" min="0" max="100" ng-model="newSousTache.statut" class="form-control" placeholder="Niveau d'avancement" >
+                    </div>
+                    <!--<div class="md-form" ng-show="plusOptions == 'sous'">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3">
+                                <i class="fa fa-calendar prefix"></i>
+                                <ng-datepicker ng-model="newSousTache.rappel.date" view-format="Do MMMM YYYY" placeholder="Date de rappel" > </ng-datepicker>
+                            </div>
+                            <div class="col-md-3 col-sm-3">
+                                <ng-timepicker ng-model="newSousTache.rappel.heure" view-format="Do MMMM YYYY" placeholder="Heure de rappel" > </ng-timepicker>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <input type="text" ng-model="newSousTache.rappel.text" placeholder="Message"/>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="md-form" ng-show="plusOptions == 'sous'">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <input type="number" min="1" class="form-control" ng-model="newSousTache.numero" placeholder="Numéro d'ordre" >
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <input type="number" min="1" max="3" class="form-control" ng-model="newSousTache.priorite" placeholder="Niveau de priorité"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md-form" ng-show="plusOptions == 'sous'">
+                        <input type="text" ng-model="newSousTache.commentaires" class="form-control" placeholder="Laisser un commentaire">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="creerTache('sous')">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addadherant" tabindex="-1" role="dialog" aria-labelledby="addadherantLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addadherantLabel">Ajouter des membres au projet</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <fieldset class="form-group" ng-repeat="adherant in adherants">
+                        <input type="checkbox" ng-model="adherant.pris" id="checkbox{{adherant._id}}">
+                        <label for="checkbox{{adherant._id}}">
+                            <img ng-src="{{path + adherant.photo}}" class="img-circle" style="height: 30px; width: 30px;">
+                            {{adherant.nom}} {{adherant.prenom}}
+                        </label>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="adherer()">Ajouter</button>
+            </div>
+        </div>
+    </div>
+</div>
+

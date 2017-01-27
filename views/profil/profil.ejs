@@ -1,0 +1,67 @@
+
+<div class="row">
+    <div class="row col-sm-2">
+        <img src="{{me.photo}}" class="img-circle img-responsive" alt="{{me.nom}} {{me.prenom}}" >
+    </div>
+    <div class="col-sm-7 row" style="font-size: 1.3em">
+        <div><span>Nom: </span><span>{{me.nom}}</span></div>
+        <div><span>Prénom: </span><span>{{me.prenom}}</span></div>
+        <div><span>Niveau d'accès: </span><span>{{me.acces}}</span></div>
+    </div>
+</div>
+    <button type="button" class="btn btn-primary " style="position: absolute; right: 25px" data-toggle="modal" data-target="#myModal">
+        Mettre à jour
+    </button>
+    <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Mise à jour du profil</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal"  enctype="multipart/form-data" name="form">
+                    <div class="form-group">
+                        <label for="usernom" class="col-sm-3 control-label">Nom</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="nom" class="form-control" ng-model="moi.nom" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userprenom" class="col-sm-3 control-label">Prénom</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" ng-model="moi.prenom" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="usermdp" class="col-sm-3 control-label">Mot de passe</label>
+                        <div class="col-sm-9">
+                            <input type="password" minlength="4" class="form-control" ng-model="moi.mdp">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userconfmdp" class="col-sm-3 control-label">Confirmer le mot de passe</label>
+                        <div class="col-sm-9">
+                            <input type="password" minlength="4" class="form-control" ng-model="moi.confirmemdp">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-3"></div>
+                        <div class="btn btn-primary col-sm-9" ng-model="photo" ngf-select  name="file" ngf-pattern="'image/*'" ngf-accept="'image/*'"
+                             ngf-max-size="20MB" ngf-min-height="100"  ngf-resize="{width: 100, height: 100}" >
+                            Cliquez pour ajouter votre photo
+                        </div>
+                        <div class="col-sm-offset-3 col-sm-3"><img ngf-src="photo" class="img-responsive"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="update()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<hr>
